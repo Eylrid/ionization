@@ -20,7 +20,7 @@ Use flooding to find the cheapest payment route through a Lightning Network in w
 # The Payee (Bob) creates two secret values, k1 and k2.
 # Bob hashes k1 and k2 to produce h1 and h2, respectively.
 # Bob sends h1 and h2 to the Payer (Alice).
-# Alice sends non-binding messages of intent to all hubs she is connected to that say "If you send me the preimage of \lh1> I will route a payment through you that pays you X for the preimage of another hash."
+# Alice sends non-binding messages of intent to all hubs she is connected to that say "If you send me the preimage of <nowiki><h1></nowiki> I will route a payment through you that pays you X for the preimage of another hash."
 # Each hub iteratively sends similiar messages to its peers, promising to pay the amount they were promised minus whatever fee they want to charge.
 # Any hub that gets a better offer for the same hash sends new messages to its peers updating what it will offer.
 # Bob waits a period of time to let the messages propgate through the network to him, then selects the best offer.
