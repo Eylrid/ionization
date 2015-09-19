@@ -1,0 +1,42 @@
+<pre>
+  Title: Ionization Protocol: Distributed Payment Route Finding for Lightning Network
+  Author: Amos Bairn <eylrid@gmail.com>
+  Status: Draft
+  Created: 2015-09-19
+</pre>
+
+==Abstract==
+
+Use flooding to find the cheapest payment route through a Lightning Network in which each participant only knows of the participants they are connected to. A non-binding bounty is flooded through the network until the cheapest route is found. HTLCs can then be created as normal.
+
+==Motivation==
+
+# Allow shape of network to remain hidden.
+# Allow user anonymity.
+# Allow users to find the cheapest payment routes possible.
+
+==Specification==
+
+# The Payee (Bob) creates two secret values, k1 and k2.
+# Bob hashes k1 and k2 to produce h1 and h2, respectively.
+# Bob sends h1 and h2 to the Payer (Alice).
+# Alice sends non-binding messages of intent to all hubs she is connected to that say "If you send me the preimage of <h1> I will route a payment through you that pays you X for the preimage of another hash."
+# Each hub iteratively sends similiar messages to its peers, promising to pay the amount they were promised minus whatever fee they want to charge.
+# Any hub that gets a better offer for the same hash sends new messages to its peers updating what it will offer.
+# Bob waits a period of time to let the messages propgate through the network to him, then selects the best offer.
+## If the best offer isn't good enough Bob can abort the transaction.
+# Bob send k1 and a minimum timeout interval to the hub that gave him the best offer.
+# Each hub in the route adds to the timeout interval the window of time they want to have to act if things go wrong, and sends that along with k1 to whichever peer gave them the best offer.
+# When k1 and the total timeout gets back to Alice, she creates a HTLC that:
+## Uses h2 as the R hash.
+## Has a timeout equal to the timeout sent plus whatever time Alice wants.
+## Pays whoever sent her k1.
+
+==Caveats==
+
+This scheme could eaily be attacked by:
+
+# Set up payment channels with two major hubs.
+# Use low or negative fees in the non-binding messages to guarentee payments get routed through you.
+## When k1 gets to you do nothing with it, blocking the transaction.
+## Keep records of transactions routed through you.
